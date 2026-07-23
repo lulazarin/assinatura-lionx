@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assinaturas LionX</title>
+<style>
+  :root{
+    --bg:#0d0f0e;
+    --panel:#141816;
+    --card:#ffffff;
+    --green:#2fe07f;
+    --green-dark:#1fae60;
+    --text:#e7ece9;
+    --muted:#8a938e;
+    --line:#242a27;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(1200px 600px at 80% -10%, #12241b 0%, var(--bg) 55%);
+    color:var(--text);min-height:100vh;
+  }
+  header{
+    display:flex;align-items:center;gap:12px;
+    padding:20px 32px;border-bottom:1px solid var(--line);
+    background:rgba(13,15,14,.7);backdrop-filter:blur(8px);
+    position:sticky;top:0;z-index:5;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.3px}
+  .brand .x{color:var(--green)}
+  .brand small{font-weight:500;color:var(--muted);font-size:13px;margin-left:6px}
+  .wrap{
+    max-width:1180px;margin:0 auto;padding:36px 32px 80px;
+    display:grid;grid-template-columns:1fr 1.25fr;gap:40px;align-items:start;
+  }
+  @media(max-width:900px){.wrap{grid-template-columns:1fr;gap:28px}}
+  h1{font-size:22px;font-weight:700;letter-spacing:-.4px}
+  .sub{color:var(--muted);font-size:14px;margin-top:6px;line-height:1.5}
+  label{display:block;font-size:13px;font-weight:600;margin:20px 0 8px;color:var(--text)}
+  label span{color:var(--muted);font-weight:400}
+  input{
+    width:100%;padding:13px 15px;border-radius:12px;
+    border:1px solid var(--line);background:var(--panel);color:var(--text);
+    font-size:14px;transition:border-color .15s,box-shadow .15s;
+  }
+  input::placeholder{color:#5a625d}
+  input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(47,224,127,.15)}
+  .card-preview{
+    background:var(--panel);border:1px solid var(--line);border-radius:20px;
+    padding:26px;
+  }
+  .preview-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+  .stage{background:#f4f6f5;border-radius:14px;padding:26px 22px;overflow:auto}
+  .actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+  button{
+    font:inherit;font-weight:600;font-size:14px;border:none;cursor:pointer;
+    padding:13px 22px;border-radius:12px;transition:transform .08s,opacity .15s,background .15s;
+  }
+  button:active{transform:translateY(1px)}
+  .btn-primary{background:var(--green);color:#06120b}
+  .btn-primary:hover{background:#43e88c}
+  .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--green);color:var(--green)}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:14px;line-height:1.6}
+  .toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--green);color:#06120b;font-weight:700;font-size:14px;
+    padding:12px 22px;border-radius:12px;opacity:0;pointer-events:none;
+    transition:opacity .25s,transform .25s;box-shadow:0 10px 30px rgba(0,0,0,.4);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">Lion<span class="x">X</span><small>· Gerador de assinaturas</small></div>
+  </header>
+
+  <div class="wrap">
+    <!-- FORM -->
+    <section>
+      <h1>Seus dados</h1>
+      <p class="sub">Preencha os campos e sua assinatura é montada automaticamente ao lado. Depois é só clicar em <strong>Copiar assinatura</strong> e colar na configuração de assinatura do seu e-mail.</p>
+
+      <label>Nome completo</label>
+      <input id="nome" type="text" placeholder="Ex.: Luana Lazarin" autocomplete="name">
+
+      <label>Cargo / Área</label>
+      <input id="cargo" type="text" placeholder="Ex.: Pessoas &amp; Cultura">
+
+      <label>Telefone</label>
+      <input id="fone" type="text" placeholder="Ex.: +55 11 98539-4593">
+
+      <label>E-mail</label>
+      <input id="email" type="email" placeholder="Ex.: luana.lazarin@lionx.com.br" autocomplete="email">
+
+      <label>Endereço <span>(opcional)</span></label>
+      <input id="endereco" type="text" placeholder="Ex.: Av. Manuel Bandeira, 291 - Bloco B, Vila Leopoldina, São Paulo - SP">
+
+      <label>URL do logo hospedado <span>(opcional)</span></label>
+      <input id="logo" type="text" placeholder="Deixe em branco para usar o logo em texto">
+      <p class="hint">Por padrão o logo é desenhado em texto (funciona em qualquer cliente). Se a LionX hospedar o PNG do logo em um link público, cole aqui para usar a arte oficial.</p>
+    </section>
+
+    <!-- PREVIEW -->
+    <section class="card-preview">
+      <div class="preview-title">Prévia</div>
+      <div class="stage">
+        <div id="preview"></div>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" onclick="copySignature()">Copiar assinatura</button>
+        <button class="btn-ghost" onclick="copyHTML()">Copiar código HTML</button>
+      </div>
+      <p class="hint">É exatamente isto que quem receber o seu e-mail vai ver. No Gmail e Outlook Web, use <strong>Copiar assinatura</strong> e cole direto no campo de assinatura. No Outlook clássico, prefira <strong>Copiar código HTML</strong>.</p>
+    </section>
+  </div>
+
+  <div class="toast" id="toast">Copiado!</div>
+
+<script>
+  const fields = ['nome','cargo','fone','email','endereco','logo'];
+  const el = id => document.getElementById(id);
+
+  function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  function buildSignature(){
+    const nome = esc(el('nome').value) || 'Nome Sobrenome';
+    const cargo = esc(el('cargo').value) || 'Cargo · Área';
+    const fone = esc(el('fone').value);
+    const email = esc(el('email').value);
+    const endereco = esc(el('endereco').value);
+    const logo = el('logo').value.trim();
+
+    const green = '#2fe07f';
+    const dark = '#0d0f0e';
+
+    // Logo block: hosted image or text wordmark
+    const logoBlock = logo
+      ? `<img src="${esc(logo)}" alt="LionX" width="120" style="display:block;border:0;outline:none;">`
+      : `<span style="font-family:Arial,Helvetica,sans-serif;font-size:30px;font-weight:800;color:#ffffff;letter-spacing:-.5px;">Lion<span style="color:${green};">X</span></span>`;
+
+    // Contact rows
+    const row = (glyph,val,href) => {
+      if(!val) return '';
+      const inner = href
+        ? `<a href="${href}" style="color:#2a2f2c;text-decoration:none;">${val}</a>`
+        : `<span style="color:#2a2f2c;">${val}</span>`;
+      return `<tr>
+        <td valign="top" style="padding:3px 8px 3px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;">${glyph}</td>
+        <td valign="top" style="padding:3px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#2a2f2c;">${inner}</td>
+      </tr>`;
+    };
+
+    const dot = c => `<span style="display:inline-block;width:16px;height:16px;line-height:16px;text-align:center;background:${c};color:#06120b;border-radius:50%;font-size:9px;font-weight:bold;">&nbsp;</span>`;
+
+    const contactRows =
+      row('📞', fone) +
+      row('✉️', email ? email : '', email ? 'mailto:'+email : '') +
+      row('📍', endereco);
+
+    return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
+  <tr>
+    <td valign="middle" style="background:${dark};padding:22px 28px;border-radius:14px 0 0 0;text-align:center;">
+      ${logoBlock}
+    </td>
+    <td valign="middle" style="background:${dark};width:4px;padding:0;">
+      <div style="width:4px;height:88px;background:${green};"></div>
+    </td>
+    <td valign="middle" style="background:#ffffff;padding:16px 24px;border-radius:0 14px 0 0;border:1px solid #e6e9e7;border-left:none;border-bottom:none;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:bold;color:${dark};line-height:22px;">${nome}</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-style:italic;color:${green};font-weight:bold;line-height:18px;margin-bottom:8px;">${cargo}</div>
+      <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+        ${contactRows}
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3" style="background:${dark};padding:8px 20px;border-radius:0 0 14px 14px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:1.5px;color:${green};text-transform:uppercase;">Holding de tecnologia&nbsp;&nbsp;·&nbsp;&nbsp;PWS Cloud&nbsp;&nbsp;·&nbsp;&nbsp;PhizChat</td>
+  </tr>
+</table>`;
+  }
+
+  function render(){ el('preview').innerHTML = buildSignature(); }
+
+  function showToast(msg){
+    const t = el('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'),1800);
+  }
+
+  async function copySignature(){
+    const html = buildSignature();
+    try{
+      const blob = new Blob([html], {type:'text/html'});
+      const text = new Blob([el('preview').innerText], {type:'text/plain'});
+      await navigator.clipboard.write([new ClipboardItem({'text/html':blob,'text/plain':text})]);
+      showToast('Assinatura copiada!');
+    }catch(e){
+      // Fallback: select the rendered node and execCommand
+      const range = document.createRange();
+      range.selectNode(el('preview'));
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      try{ document.execCommand('copy'); showToast('Assinatura copiada!'); }
+      catch(err){ showToast('Não foi possível copiar'); }
+      sel.removeAllRanges();
+    }
+  }
+
+  async function copyHTML(){
+    try{ await navigator.clipboard.writeText(buildSignature()); showToast('Código HTML copiado!'); }
+    catch(e){ showToast('Não foi possível copiar'); }
+  }
+
+  fields.forEach(id => el(id).addEventListener('input', render));
+  render();
+</script>
+</body>
+</html>
