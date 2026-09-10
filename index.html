@@ -99,8 +99,8 @@
       <input id="endereco" type="text" placeholder="Ex.: Av. Manuel Bandeira, 291 - Bloco B, Vila Leopoldina, São Paulo - SP">
 
       <label>URL do logo hospedado <span>(opcional)</span></label>
-      <input id="logo" type="text" placeholder="Deixe em branco para usar o logo em texto">
-      <p class="hint">Por padrão o logo é desenhado em texto (funciona em qualquer cliente). Se a LionX hospedar o PNG do logo em um link público, cole aqui para usar a arte oficial.</p>
+      <input id="logo" type="text" placeholder="Deixe em branco para usar o logo oficial da LionX">
+      <p class="hint">Por padrão a assinatura já usa o logo oficial da LionX. Só preencha aqui se quiser trocar por outra arte hospedada em um link público.</p>
     </section>
 
     <!-- PREVIEW -->
@@ -134,12 +134,12 @@
     const logo = el('logo').value.trim();
 
     const green = '#2fe07f';
-    const dark = '#0d0f0e';
+    const dark = '#000000';
 
-    // Logo block: hosted image or text wordmark
-    const logoBlock = logo
-      ? `<img src="${esc(logo)}" alt="LionX" width="120" style="display:block;border:0;outline:none;">`
-      : `<span style="font-family:Arial,Helvetica,sans-serif;font-size:30px;font-weight:800;color:#ffffff;letter-spacing:-.5px;">Lion<span style="color:${green};">X</span></span>`;
+    // Logo block: hosted image (default = logo oficial hospedado no próprio site)
+    const defaultLogo = 'https://assinatura-lionx.vercel.app/logo.png';
+    const logoSrc = logo || defaultLogo;
+    const logoBlock = `<img src="${esc(logoSrc)}" alt="LionX" width="150" height="48" style="display:block;border:0;outline:none;">`;
 
     // Contact rows
     const row = (glyph,val,href) => {
